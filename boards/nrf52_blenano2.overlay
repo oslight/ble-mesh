@@ -1,0 +1,19 @@
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&flash0 {
+	partitions {
+		app_state_partition: partition@7d000 {
+			label = "application-state";
+			reg = <0x0007d000 0x2000>;
+		};
+
+		credentials_partition: partition@7f000 {
+			label = "lwm2m-credentials";
+			reg = <0x0007f000 0x1000>;
+		};
+	};
+};

@@ -1,0 +1,54 @@
+# Copyright (c) 2017 Linaro Limited
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+mainmenu "Linaro FOTA configuration"
+
+config ZEPHYR_BASE
+	string
+	option env="ZEPHYR_BASE"
+
+config APPLICATION_BASE
+	string
+	option env="PROJECT_BASE"
+
+source "$ZEPHYR_BASE/Kconfig.zephyr"
+
+config FOTA_DEVICE
+	bool "Enable FOTA device settings"
+	default y
+	select FOTA_DEVICE_SOC_SERIES_NRF52X if SOC_SERIES_NRF52X
+	select FOTA_DEVICE_SOC_SERIES_STM32F4X if SOC_SERIES_STM32F4X
+	help
+	  Main config to enable device specific settings
+
+config FOTA_DEVICE_SOC_SERIES_NRF52X
+	bool "Nordic Semiconductor nRF52 FOTA settings"
+	select TEST_RANDOM_GENERATOR
+	select PWM_NRF5_SW
+	default n
+
+config FOTA_DEVICE_SOC_SERIES_STM32F4X
+	bool "STM32F4x FOTA settings"
+	select TEST_RANDOM_GENERATOR
+	select PWM_STM32
+	default n
+
+config SYS_LOG_FOTA_LEVEL
+	int "FOTA log level"
+	depends on SYS_LOG && FOTA_DEVICE
+	default 0
+	range 0 4
+	help
+	  Set the log level for the FOTA library.
+
+	  The available levels are:
+
+	  - 0 OFF: do not write
+	  - 1 ERROR: only write SYS_LOG_ERR
+	  - 2 WARNING: write SYS_LOG_WRN in addition to previous level
+	  - 3 INFO: write SYS_LOG_INF in addition to previous levels
+	  - 4 DEBUG: write SYS_LOG_DBG in addition to previous levels
+
+source "$APPLICATION_BASE/Kconfig.app"
